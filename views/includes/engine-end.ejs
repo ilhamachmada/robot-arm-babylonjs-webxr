@@ -1,0 +1,35 @@
+<script>
+    var engine;
+ try {
+     engine = createDefaultEngine();
+ } catch(e) {
+     console.log("the available createEngine function failed. Creating the default engine instead");
+     engine = createDefaultEngine();
+ }
+         if (!engine) throw 'engine should not be null.';
+         scene = createScene();
+         scene.then(returnedScene => { sceneToRender = returnedScene; });
+         
+ 
+         engine.runRenderLoop(function () {
+             if (sceneToRender) {
+                 sceneToRender.render();
+             }
+         });
+ 
+         function debugOnOff() {
+         if ( sceneToRender.debugLayer.isVisible() ) {
+         sceneToRender.debugLayer.hide();
+         } else {
+         sceneToRender.debugLayer.show();
+         }
+     }
+ 
+         // Resize
+         window.addEventListener("resize", function () {
+             engine.resize();
+         });
+ </script>
+ <div style="position:absolute;bottom:20px;right:50%;">
+     <button onClick="debugOnOff()">DEBUG</button>
+ </div>

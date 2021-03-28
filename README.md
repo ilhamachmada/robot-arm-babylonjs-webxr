@@ -1,2 +1,1 @@
-# robot-arm-babylonjs-webxr
- Controlling Physical and Virtual Robot Arm using Babylonjs and Arduino for WebXR
+Project WebVR Simulation by Cloud9WebDev

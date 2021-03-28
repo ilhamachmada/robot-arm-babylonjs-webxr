@@ -1,0 +1,50 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f0f0;
+}
+
+main {
+    display: grid;
+    grid-template-areas: 
+    "temp chart"
+    "adc chart"
+    "voltage chart";
+    justify-items: center;
+    align-items: center;
+}
+
+h5 {font-weight: lighter;margin:18px 0 0 0;text-align: center;}
+div > p {font-size: 32pt;text-align: center;margin:12px}
+
+.adc {
+    grid-area: adc;
+    padding: 2px;
+    width: 55%;
+    background: white;
+    justify-self: flex-end;
+}
+
+.chart {
+    grid-area: chart;
+    padding: 50px;
+    background: white;
+    box-shadow: 2px 3px 10px rgba(0,0,0,.3)
+}
+
+.temp {
+    grid-area: temp;
+    padding: 2px;
+    width: 55%;
+    background: white;
+    align-self: flex-end;
+    justify-self: flex-end;
+}
+
+.voltage {
+    grid-area: voltage;
+    padding: 2px;
+    width: 55%;
+    background: white;
+    align-self: flex-start;
+    justify-self: flex-end;
+}

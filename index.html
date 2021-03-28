@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js s-->
+        <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://preview.babylonjs.com/ammo.js"></script>
+        <script src="https://preview.babylonjs.com/cannon.js"></script>
+        <script src="https://preview.babylonjs.com/Oimo.js"></script>
+        <script src="https://preview.babylonjs.com/libktx.js"></script>
+        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = null;
+        var scene = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
+        function attachHtml(id , W, H ,L , T ,p ,ts,content){
+        var deg = 180./Math.PI; 
+        
+        var el = document.createElement('div');
+        var exist = false;
+        if(document.getElementById('spDiv'+id))
+        {
+            exist = true;
+           el = document.getElementById('spDiv'+id);
+        }
+        zone = document.getElementById('canvasZone');
+          var w = zone.offsetWidth.valueOf()*1.;
+          var h = zone.offsetHeight.valueOf()*1.;
+          
+        el.setAttribute('style', '\
+            transform: scale(1.0) scaleZ(1.0) rotateX('+ts.rx+'deg) rotateY('+ts.ry+'deg)  rotateZ('+ts.rz+'deg);\
+        transform-origin: 50% 50%;\
+        perspective: '+p+';-webkit-transform: scale(1.0) scaleZ(1.0) rotateX('+ts.rx+'deg)  rotateY('+ts.ry+'deg)  rotateZ('+ts.rz+'deg);\
+        -webkit-transform-origin: 50% 50%;\
+        -moz-transform: scale(1.0) scaleZ(1.0) rotateX('+ts.rx+'deg)  rotateY('+ts.ry+'deg)  rotateZ('+ts.rz+'deg);\
+        -moz-transform-origin: 50% 50%;\
+        -o-transform: scale(1.0) scaleZ(1.0) rotateX('+ts.rx+'deg)  rotateY('+ts.ry+'deg)  rotateZ('+ts.rz+'deg);\
+        -o-transform-origin: 50% 50%;\
+        -ms-transform: scale(1.0) scaleZ(1.0) rotateX('+ts.rx+'deg)  rotateY('+ts.ry+'deg)  rotateZ('+ts.rz+'deg);\
+        -ms-transform-origin:50% 50%;\
+        transform: scale(1.0) scaleZ(1.0) rotateX('+ts.rx+'deg)  rotateY('+ts.ry+'deg)  rotateZ('+ts.rz+'deg);\
+        transform-origin: 50% 50%;\
+        position:absolute;top:'+(h/2.-H/2.+T)+'px;left:'+(w/2.-W/2.+L)+'px;z-index:100;background-color:#ffffff;width:'+W+'px;height:'+H+'px;opacity:1.;');
+        el.id = "spDiv"+id; 
+        
+        
+         zone.setAttribute('style','-o-perspective: '+p+';\
+        -o-perspective-origin: 50% 50%;\
+        -webkit-perspective: '+p+';\
+        -webkit-perspective-origin: 50% 50%;\
+        -moz-perspective: '+p+';\
+        -moz-perspective-origin: 50% 50%;\
+        -ms-perspective: '+p+';\
+        -ms-perspective-origin: 50% 50%;\
+        perspective: '+p+';\
+        perspective-origin: 50% 50%;\
+        position:relative');
+        
+        if(!exist){ 
+        el.innerHTML = content;
+          zone.appendChild(el);
+        }
+        
+        
+        
+        }
+        
+        var createScene = function () {
+        
+            // This creates a basic Babylon Scene object (non-mesh)
+            var scene = new BABYLON.Scene(engine);
+        
+            // This creates and positions a free camera (non-mesh)
+            var camera = new BABYLON.ArcRotateCamera("camera1",0,0,1, new BABYLON.Vector3(0, 50, 0.), scene);
+        
+            // This targets the camera to scene origin
+            camera.setTarget(BABYLON.Vector3.Zero());
+         camera.attachControl(canvas, true);
+        
+          
+            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+        
+            // Default intensity is 1. Let's dim the light a small amount
+            light.intensity = 0.7;
+        
+            // Our built-in 'sphere' shape. Params: name, subdivs, size, scene
+          
+            //================VR SETUP=============
+            var vrHelper = scene.createDefaultVRExperience();
+            vrHelper.enableInteractions();
+            vrHelper.enableTeleportation({floorMeshName: "ground"});
+            vrHelper.onAfterEnteringVRObservable.add(()=>{
+            if(scene.activeCamera === vrHelper.vrDeviceOrientationCamera){
+            BABYLON.FreeCameraDeviceOrientationInput.WaitForOrientationChangeAsync(1000).then(()=>{
+                // Successfully received sensor input
+            }).catch(()=>{
+                alert("Device orientation camera is being used but no sensor is found, prompt user to enable in safari settings");
+            })
+            }
+            })
+
+            // Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
+            var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
+            ground.material = new BABYLON.StandardMaterial("scene",scene);
+            ground.material.wireframe = true;
+            var time = 0;
+            
+         
+          attachHtml( 'item1',baseSize*size,baseSize*size,0.,0.,'800px',{rx:dx,ry:dy,rz:dz } , '<iframe src="https://www.bing.com"></iframe>'  ); 
+                 
+        
+        
+            return scene;
+        
+        };
+        
+        engine = createDefaultEngine();
+        if (!engine) throw 'engine should not be null.';
+        scene = createScene();
+
+        engine.runRenderLoop(function () {
+            if (scene) {
+                scene.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
