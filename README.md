@@ -1,1 +1,1 @@
-Project WebVR Simulation by Cloud9WebDev
+Project WebXR Robot Arm Simulation by Cloud9WebDev
